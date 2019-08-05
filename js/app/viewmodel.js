@@ -329,17 +329,36 @@ class ViewModel {
         caught: this.completionManager.isFishCaught(x.id),
         pinned: this.completionManager.isFishPinned(x.id),
         timerState: () => { return x.isCatchable() ? 'fish-active' : '' },
-        nextAvailBin: () => {
+        isClosedSoon: () => {
+          var crs = x.catchableRanges;
+          if (crs.length > 0) {
+            if (dateFns.isPast(eorzeaTime.toEarth(+crs[0].start()))) {
+              var minutesUntilClose = dateFns.differenceInMinutes(eorzeaTime.toEarth(Date.now(), +crs[0].end()));
+              if (minutesUntilClose < 3) {
+                return true;
+              }
+            }
+          }
+          return false;
+        },
+        isOpenSoon: () => {
           var crs = x.catchableRanges;
           if (crs.length > 0) {
             if (dateFns.isFuture(eorzeaTime.toEarth(+crs[0].start()))) {
               var minutesUntilUp = dateFns.differenceInMinutes(eorzeaTime.toEarth(+crs[0].start()), Date.now());
-              if (minutesUntilUp < 15) {
-                return 'fish-bin-15';
+              if (minutesUntilUp < 4) {
+                return true;
               }
             }
           }
-          return '';
+          return false;
+        },
+        isOpen: () => {
+          var crs = x.catchableRanges;
+          if (crs.length > 0) {
+            return dateFns.isPast(eorzeaTime.toEarth(+crs[0].start()));
+          }
+          return true;
         },
         availability: {
           current: {

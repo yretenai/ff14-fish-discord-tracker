@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import moment from 'moment';
 import twix from 'twix';
+import Rx from 'rx';
 import dateFns from 'date-fns';
 
 import __p from './localization.js';
@@ -22,6 +23,7 @@ class FishWatcher {
       // Every new Eorzea bell, reconsider the fishes windows.
       eorzeaTime.currentBellChanged.subscribe(() => this.updateFishes());
     });
+    this.updatedFishesObserver = new Rx.BehaviorSubject();
   }
 
   updateFishes() {
@@ -35,6 +37,7 @@ class FishWatcher {
           dateFns.isSameOrAfter(eDate, +fish.catchableRanges[0].end())) {
         // Remove the first entry from the array.
         fish.catchableRanges.shift();
+        fish.notifyCatchableRangesUpdated();
       }
     }
 
@@ -47,6 +50,8 @@ class FishWatcher {
     for (let fish of fishes) {
       this.updateRangesForFish(fish);
     }
+
+    this.updatedFishesObserver.onNext(fishes);
 
     console.info("FishWatcher is finished...");
   }

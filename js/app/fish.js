@@ -81,6 +81,10 @@ class Fish {
     this.catchableRangesObserver = new Rx.BehaviorSubject([]);
   }
 
+  notifyCatchableRangesUpdated() {
+    this.catchableRangesObserver.onNext(this.catchableRanges);
+ }
+
   applyLocalization() {
     // This function allows for runtime language swapping.
     // Really, stuff like this belongs in the viewmodel, but there's a lot of
@@ -160,6 +164,7 @@ class Fish {
       // The first entry is special. We can simply push it into the array.
       // Remember, it's observable!
       this.catchableRanges.push(nextRange);
+      this.notifyCatchableRangesUpdated();
       return;
     }
 
@@ -184,6 +189,7 @@ class Fish {
     }
     this.catchableRanges.splice.apply(
       this.catchableRanges, [-1, 1].concat(merged) );
+    this.notifyCatchableRangesUpdated();
   }
 }
 
