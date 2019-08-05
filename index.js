@@ -5,6 +5,9 @@ fishWatcher.updateFishes();
 
 var all = viewModel.updateAll();
 for(var fish of all) {
-    console.log(fish.availability.upcoming().date());
+    if(!fish.alwaysAvailable) {
+        console.log(fish.availability.upcoming().date());
+        // boo
+    }
 }
 
