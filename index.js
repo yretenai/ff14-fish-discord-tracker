@@ -1,8 +1,10 @@
-const express = require('express')
-const app = express()
+import fishWatcher from './js/app/fishwatcher.js'
+import viewModel from './js/app/viewmodel.js'
 
-app.use(express.static(__dirname, {maxAge: 2592000000}))
+fishWatcher.updateFishes();
 
-app.listen(3000, function() {
-  console.log('Listing on port 3000!')
-})
+var all = viewModel.updateAll();
+for(var fish of all) {
+    console.log(fish.availability.upcoming().date());
+}
+

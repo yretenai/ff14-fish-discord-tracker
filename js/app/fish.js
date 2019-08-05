@@ -1,4 +1,14 @@
-function shouldLogForFish(fish) {
+import _ from 'underscore';
+import moment from 'moment';
+import twix from 'twix';
+import dateFns from 'date-fns';
+import Rx from 'rx';
+
+import DATA from './data.js';
+import __p from './localization.js';
+import eorzeaTime from './time.js';
+
+function shouldLogForFish() {
   return false;
 }
 
@@ -13,7 +23,7 @@ class Fish {
     this.id = fishData._id;
     this.name = __p(DATA.ITEMS[this.id], "name");
     this.icon = DATA.ITEMS[this.id].icon;
-    this.logging = shouldLogForFish(this);
+    this.logging = shouldLogForFish();
     if (fishData.location !== null) {
       var fishingSpot = null;
       var spearfishing = false;
@@ -69,10 +79,6 @@ class Fish {
 
     // Create a subject for catchableRanges that we can subscribe to.
     this.catchableRangesObserver = new Rx.BehaviorSubject([]);
-  }
-
-  notifyCatchableRangesUpdated() {
-    this.catchableRangesObserver.onNext(this.catchableRanges);
   }
 
   applyLocalization() {
@@ -154,7 +160,6 @@ class Fish {
       // The first entry is special. We can simply push it into the array.
       // Remember, it's observable!
       this.catchableRanges.push(nextRange);
-      this.notifyCatchableRangesUpdated();
       return;
     }
 
@@ -179,7 +184,6 @@ class Fish {
     }
     this.catchableRanges.splice.apply(
       this.catchableRanges, [-1, 1].concat(merged) );
-    this.notifyCatchableRangesUpdated();
   }
 }
 
@@ -200,7 +204,7 @@ function muxinIntuitionReqs(fish, idx, fishes) {
   }
 }
 
-let Fishes = _(DATA.FISH).chain()
+export default _(DATA.FISH).chain()
   .values()
   .map((fishData) => new Fish(fishData))
   .each(muxinIntuitionReqs)

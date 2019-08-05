@@ -1,12 +1,12 @@
 # FFX|V Fish Tracker App
-A webapp designed for tracking big fish and arranging them by which fish are less often available rather than just available right now.
+Invokes Discord webhooks when fish are available (and closed availability)
 
 ## Development Notes
 ### Cloning this Repo
-This repo makes use of submodules. When cloning, please include the `--recurse-submodules` option.
+This repo makes use of submodules. When cloning, please include the `--recurse-submodules` or `--recursive` option.
 
 ```
-git clone --recurse-submodules git@github.com:icykoneko/ff14-fish-tracker-app.git
+git clone --recurse-submodules git@github.com:healingbrew/ff14-fish-tracker-app.git
 ```
 
 ### Setup
@@ -41,34 +41,11 @@ Sometimes you forget how to do this after several months... Clearly the TODO lis
   * Update the `viewModel.filter` definition in `index.html` by adding the patch version. (You'll also need to update the entry in `js/app/viewmodel.js`)
   * Remove the `disabled` class from the new patch version.
     * **NOTE:** If it's a new expansion, well... make sure it looks nice, and set the patch buttons to `disabled` at first.
-* If new textures were extracted (i.e. new fish images, or new bait images);
-  * Update the *cache buster* in `index.html` for `public/images/sprite.css`. Use the format `?${ver}_YYYYMMDD`.
-  * Rebuild the sprite image using: `sprity create ./public/images/ ./private/images/**/*.png -c . -s sprite.css --prefix sprite-icon --margin 2 --orientation binary-tree --engine jimp`
-    * **NOTE:** This command **must** be run via CMD, not bash. For some reason, bash will cause the entries in the CSS to be different...
-  * Edit the `public/images/sprite.css` file and add a *cache buster* to the main image. Use the format: `?YYYYMMDD`.
-  * Compress the `public/images/sprite.png` file using https://tinypng.com/. This should reduce its size by ~67% and that reduces bandwidth, and costs.
-* Test the site locally!!! `npm start` then open http://localhost:3000/.
-* Commit changes to master with an appropriate message. Don't forget to `git push` all changes to GitHub as well.
-* Go fish?!
-
-### Updating the website
-* Switch to the `gh-pages` branch (or `cd dist`.)
-* Merge the `master` branch in. You'll need to remove the entries that only exist in master... it's annoying, sorry.
-* If changes were made to the sprites, you need to place the compressed `sprite.png` and `sprite.css` files in `public/images/` for the `gh-pages` branch. This is not included in the master branch!
-* Commit, and push changes to GitHub.
 
 ## TODOs
-* Automation of sprite generation
-* Better automation of fish data updating...
-* Save the filter settings in local storage.
-  * When user revisits the site, it should only compute availability for the fish being displayed.
-  * Add filter settings to import/export blob.
-* Provide option for displaying actual time instead of relative time by default.
-* Optimize the code for refreshing fish data on screen. The for-each loop eats up a lot of time and probably doesn't need to be recomputed.
-* Add GUI that resembles the in-game fishing log, allowing users an easier method of checking off the fish they've caught.
-* Add area filtering?
+
+* See [base branch](https://github.com/icykoneko/ff14-fish-tracker-app#TODOs)
 
 # Contributing
-There's lots of features waiting to be implemented if you feel you have an idea for tackling them. Please follow existing code patterns with regards to style, and when possible, utilize the Semantic UI widgets so everything meshes nicely. Keep PRs simple to ensure they get merged sooner.
 
-For changes to availability of specific fish, please contact me directly via Discord (via Fish'cord). Please do not open issues here for that purpose.
+* See [base branch](https://github.com/icykoneko/ff14-fish-tracker-app#Contributing)

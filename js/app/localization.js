@@ -1,3 +1,9 @@
+import _ from 'underscore';
+import moment from 'moment';
+import twix from 'twix';
+
+import __p from './localization.js';
+
 const LANGUAGES = {
   English: "_en",
   Japanese: "_ja",
@@ -11,22 +17,6 @@ class LocalizationHelper {
   constructor() {
     // Default to English (_en).
     this.language_suffix = LANGUAGES.English;
-    // Unless... the URL has a "lang" defined...
-    let url = new URL(window.location);
-    if (url.searchParams.has('lang')) {
-      var lang = url.searchParams.get('lang');
-      if (_(LANGUAGES).chain().values().contains("_" + lang).value()) {
-        this.language_suffix = "_" + lang;
-      }
-    }
-    // Otherwise, check saved preferences from last visit.
-    else if (window.localStorage.getItem('lang')) {
-      var lang = window.localStorage.getItem('lang');
-      if (_(LANGUAGES).chain().values().contains("_" + lang).value()) {
-        this.language_suffix = "_" + lang;
-      }
-    }
-    this.languageChanged = new Rx.BehaviorSubject(this.language_suffix);
   }
 
   getLocalizedProperty(obj, name) {
@@ -48,20 +38,10 @@ class LocalizationHelper {
       .value();
   }
 
-  setLanguage(lang) {
-    if (_(LANGUAGES).chain().values().contains("_" + lang).value()) {
-      this.language_suffix = "_" + lang;
-      window.localStorage.setItem('lang', lang);
-      this.languageChanged.onNext(this.language_suffix);
-    } else {
-      console.error("Invalid language choice:", lang);
-    }
-  }
-
   getLanguage() {
     return this.language_suffix.slice(1);
   }
 }
 
 let localizationHelper = new LocalizationHelper();
-let __p = _.bind(localizationHelper.getLocalizedProperty, localizationHelper);
+export default _.bind(localizationHelper.getLocalizedProperty, localizationHelper);

@@ -1,3 +1,5 @@
+import dateFns from 'date-fns';
+
 dateFns.utc = (() => {
   var parse = dateFns.parse;
   const parseUTC = date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()));
@@ -143,3 +145,5 @@ dateFns.utc = (() => {
   };
 
 })();
+
+export default dateFns;

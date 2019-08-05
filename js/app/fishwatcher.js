@@ -1,3 +1,18 @@
+import _ from 'underscore';
+import moment from 'moment';
+import twix from 'twix';
+import dateFns from 'date-fns';
+
+import __p from './localization.js';
+import Fishes from './fish.js';
+import eorzeaTime from './time.js';
+import weatherService from './weather.js';
+
+function startOfPeriod(d) {
+  return dateFns.utc.startOfHour(
+    dateFns.utc.setHours(d, parseInt(dateFns.utc.getHours(d) / 8) * 8));
+}
+
 class FishWatcher {
   constructor() {
     // Total number of windows to keep track of.
@@ -5,7 +20,7 @@ class FishWatcher {
 
     _.defer(() => {
       // Every new Eorzea bell, reconsider the fishes windows.
-      eorzeaTime.currentBellChanged.subscribe((bell) => this.updateFishes());
+      eorzeaTime.currentBellChanged.subscribe(() => this.updateFishes());
     });
   }
 
@@ -20,7 +35,6 @@ class FishWatcher {
           dateFns.isSameOrAfter(eDate, +fish.catchableRanges[0].end())) {
         // Remove the first entry from the array.
         fish.catchableRanges.shift();
-        fish.notifyCatchableRangesUpdated();
       }
     }
 
@@ -186,4 +200,4 @@ class FishWatcher {
   }
 }
 
-let fishWatcher = new FishWatcher;
+export default new FishWatcher;

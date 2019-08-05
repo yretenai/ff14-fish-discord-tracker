@@ -1,3 +1,13 @@
+import _ from 'underscore';
+import moment from 'moment';
+import twix from 'twix';
+import dateFns from 'date-fns';
+import dateFnsEx from '../lib/dateFns.js';
+
+import DATA from './data.js';
+import __p from './localization.js';
+import eorzeaTime from './time.js';
+
 function weatherForArea(area, target) {
   if (area in DATA.WEATHER_RATES){
     var rate = _(DATA.WEATHER_RATES[area].weather_rates).find((r) => { return target < r[1]; });
@@ -143,4 +153,4 @@ class WeatherService {
   }
 }
 
-let weatherService = new WeatherService;
+export default new WeatherService;

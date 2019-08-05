@@ -1,9 +1,15 @@
+import _ from 'underscore';
+import moment from 'moment';
+import twix from 'twix';
+import Rx from 'rx';
+import dateFns from 'date-fns';
+
+import __p from './localization.js';
+
 const EARTH_TO_EORZEA = 3600 / 175;
 const EORZEA_TO_EARTH = 1 / EARTH_TO_EORZEA;
-const MS_IN_AN_HOUR = 60 * 60 * 1000;
-const MS_IN_A_DAY = 24 * MS_IN_AN_HOUR;
 
-class EorzeaTime {
+export class EorzeaTime {
   constructor() {
     this.currentBellChanged = Rx.Observable
       .interval(0.75 * EARTH_TO_EORZEA /* ms */)
@@ -12,6 +18,7 @@ class EorzeaTime {
       .distinctUntilChanged()
       .tap((v) => console.log("Current bell is now:", v));
   }
+
 
   getCurrentEorzeaDate() {
     return this.toEorzea(Date.now());
@@ -26,4 +33,4 @@ class EorzeaTime {
   }
 }
 
-let eorzeaTime = new EorzeaTime;
+export default new EorzeaTime;
