@@ -384,6 +384,25 @@ class ViewModel {
               }
             }
           },
+          next: {
+            duration: () => {
+              var crs = x.catchableRanges;
+              if (crs.length > 1) {
+                if (dateFns.isFuture(eorzeaTime.toEarth(+crs[1].start()))) {
+                  return "in " + dateFns.distanceInWordsStrict(eorzeaTime.toEarth(+crs[0].end()), eorzeaTime.toEarth(+crs[1].start()));
+                }
+              }
+              return "unknown";
+            },
+            date: () => {
+              var crs = x.catchableRanges;
+              if (crs.length > 1) {
+                if (dateFns.isFuture(eorzeaTime.toEarth(+crs[1].start()))) {
+                  return eorzeaTime.toEarth(+crs[1].start());
+                }
+              }
+            }
+          },
           upcoming: (i=1) => {
             if (i < 1) {
               console.error("Upcoming interval must be greater than 1");
