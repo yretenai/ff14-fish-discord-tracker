@@ -26,9 +26,11 @@ FONT_1 = ImageFont.truetype('seguisym.ttf', 16)
 FONT_2 = ImageFont.truetype('segoeui.ttf', 16)
 FONT_3 = ImageFont.truetype('segoeui.ttf', 20)
 FONT_4 = ImageFont.truetype('segoeui.ttf', 32)
-ARROW_RIGHT = '▶'
-ARROW_RIGHT_SIZE = FONT.getsize(ARROW_RIGHT)[0]
-ARROW_RIGHT_SIZE_1 = FONT_1.getsize(ARROW_RIGHT)[0]
+FONT_5 = ImageFont.truetype(os.path.join(_SCRIPT_PATH, 'icons.ttf'), 22)
+FONT_6 = ImageFont.truetype(os.path.join(_SCRIPT_PATH, 'icons.ttf'), 16)
+ARROW_RIGHT = '\uf061'
+ARROW_RIGHT_SIZE = FONT_5.getsize(ARROW_RIGHT)[0]
+ARROW_RIGHT_SIZE_1 = FONT_6.getsize(ARROW_RIGHT)[0]
 TIMES = '✕'
 TIMES_SIZE = FONT.getsize(TIMES)[0]
 TIMES_SIZE_1 = FONT_1.getsize(TIMES)[0]
@@ -100,17 +102,20 @@ def create_image(fish):
     else:
         location = lookup_fishing_spot_by_name(fish['location'])
     draw.text((STARTX, 30), location, font=FONT_2)
-    STARTX += max(FONT_3.getsize(fish["name"])[0], FONT_2.getsize(location)[0]) + 12
+    STARTX += max_sz + 12
     STARTY = 64
-    draw.text((STARTX, 8), ARROW_RIGHT, font=FONT)
-    STARTX += int(ARROW_RIGHT_SIZE * 1.5)
+    has_predators = fish["predators"] != None and len(fish["predators"]) > 0
+    if has_predators:
+        STARTX += 36
+    # draw.text((STARTX, 18), ARROW_RIGHT, font=FONT_5)
+    # STARTX += int(ARROW_RIGHT_SIZE * 1.5)
     if fish["snagging"] == True:
         img.paste(STATE_SNAG, (STARTX, 18), STATE_SNAG)
         STARTX += 32
     if fish["fishEyes"] == True:
         img.paste(STATE_EYES, (STARTX, 18), STATE_EYES)
         STARTX += 32
-    if fish["predators"] != None and len(fish["predators"]) > 0:
+    if has_predators:
         img.paste(STATE_INTU, (STARTX, 18), STATE_EYES)
         STARTX += 32
     bait_len = len(fish["bestCatchPath"] or [])
@@ -121,31 +126,35 @@ def create_image(fish):
             img.paste(icon, (STARTX, 12), icon)
             STARTX += 52
             if bait != last:
-                draw.text((STARTX, 20), ARROW_RIGHT, font=FONT_1)
+                draw.text((STARTX, 30), ARROW_RIGHT, font=FONT_6)
                 STARTX += int(ARROW_RIGHT_SIZE_1 * 1.5)
     OSTARTX = STARTX
-    if fish["predators"] != None and len(fish["predators"]) > 0:
+    if has_predators:
         last = list(fish["predators"].keys())[-1]
         for predator in fish["predators"]:
             count = fish["predators"][predator]
             STARTX = 32
-            draw.text((STARTX, STARTY), str(count), font=FONT_4)
+            draw.text((STARTX, STARTY-3), str(count), font=FONT_4)
             STARTX += FONT_4.getsize(str(count))[0] + 4;
-            draw.text((STARTX, STARTY+11), TIMES, font=FONT_1)
+            draw.text((STARTX, STARTY+8), TIMES, font=FONT_1)
             STARTX += int(TIMES_SIZE_1 * 1.3)
             predator_img = Image.open(os.path.join(BASE_INFO, '%s.png' % name_map[predator]))
             img.paste(predator_img, (STARTX, STARTY-12))
-            STARTX += predator_img.width + 12
+            STARTX += predator_img.width
             OSTARTX = max(STARTX, OSTARTX)
-            STARTY += 48 + 12
+            STARTY += 48 + 4
             if predator == last:
-                STARTY -= 12
-    max_sz = max(max_sz, OSTARTX)
+                STARTY -= 4
     img.crop((0,0, OSTARTX, STARTY)).save(os.path.join(BASE_INFO, '%s.png' % name_map[fish["name"]]))
-    max_sz = max(max_sz, STARTX)
-
+for fish in fishes:
+    location = fish["location"]
+    if fish["gig"] is not None:
+        location = lookup_spearfishing_spot_by_name(fish['location'])
+    else:
+        location = lookup_fishing_spot_by_name(fish['location'])
+    max_sz = max(FONT_3.getsize(fish["name"])[0], FONT_2.getsize(location)[0], max_sz)
 for fish in [fish for fish in fishes if fish != None and len(fish["predators"] or []) == 0]:
     create_image(fish)
 for fish in [fish for fish in fishes if fish != None and len(fish["predators"] or []) > 0]:
     create_image(fish)
-print("Max width %d" % max_sz)
+print("Max text width %d" % max_sz)
