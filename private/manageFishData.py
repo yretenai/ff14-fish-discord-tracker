@@ -244,6 +244,8 @@ def initialize_data(args):
     REGIONS = OrderedDict(sorted(REGIONS.items(), key=lambda t: t[0]))
     ZONES = OrderedDict(sorted(ZONES.items(), key=lambda t: t[0]))
     GATHERING_SUB_CATEGORIES = OrderedDict(sorted(GATHERING_SUB_CATEGORIES.items(), key=lambda t: t[0]))
+    yaml.dump(dict(SPEARFISHING_NODES), open(os.path.join(_SCRIPT_PATH, 'spearfishingNodes.yaml'), 'w'), Dumper=Dumper)
+    yaml.dump(dict(FISHING_NODES), open(os.path.join(_SCRIPT_PATH, 'fishingNodes.yaml'), 'w'), Dumper=Dumper)
     
     KeyValuePair = namedtuple('KeyValuePair', ['key', 'value'])
 
@@ -373,6 +375,7 @@ def rebuild_fish_data(args):
               for fish in fishes], []))))
     # Match these with Item records.
     fish_and_tackle_data = OrderedDict()
+    name_to_item = OrderedDict()
     for item in XIV.game_data.get_sheet('Item'):
         if item['Name'] not in fish_and_tackle_names:
             continue
@@ -380,6 +383,8 @@ def rebuild_fish_data(args):
             ('_id', item.key),
             *_make_localized_field('name', item, 'Name'),
             ('icon', '%06u' % item.get_raw('Icon'))])
+        name_to_item[item.get_raw('Name')] = '%06u' % item.get_raw('Icon')
+    yaml.dump(dict(name_to_item), open(os.path.join(_SCRIPT_PATH, "itemNames.yaml"), "w"), Dumper=Dumper)
 
     # Verify nothing's missing.
     diffs = set(fish_and_tackle_names) - \

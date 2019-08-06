@@ -21,3 +21,6 @@ uploaded/
 
 build.bat
 createSprites.bat
+itemNames.yaml
+spearfishingNodes.yaml
+fishingNodes.yaml
