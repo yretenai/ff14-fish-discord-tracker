@@ -1,12 +1,12 @@
-import _ from 'underscore';
-import moment from 'moment';
-import twix from 'twix';
-import dateFns from 'date-fns';
-import dateFnsEx from '../lib/dateFns.js';
+const _ = require('underscore');
+const moment = require('moment');
+const twix = require('twix');
+const dateFns = require('date-fns');
+const dateFnsEx = require('../lib/dateFns.js');
 
-import DATA from './data.js';
-import __p from './localization.js';
-import eorzeaTime from './time.js';
+const DATA = require('./data.js');
+const __p = require('./localization.js');
+const eorzeaTime = require('./time.js');
 
 function weatherForArea(area, target) {
   if (area in DATA.WEATHER_RATES){
@@ -41,7 +41,6 @@ class WeatherService {
 
   onCurrentBellChanged(bell) {
     if (bell == 0 || bell == 8 || bell == 16) {
-      console.info("Weather interval changed...");
       if (this.__weatherData.length > 0) {
         var cutoffDate =
           dateFns.utc.subDays(startOfPeriod(
@@ -49,12 +48,6 @@ class WeatherService {
         if (_(this.__weatherData).first().date < cutoffDate) {
           this.__weatherData = _(this.__weatherData).drop();
         }
-        console.log("Weather Cache:", this.__weatherData.length, "entries spanning",
-          (dateFns.differenceInMilliseconds(
-            eorzeaTime.toEarth(
-              dateFns.utc.addHours(_(this.__weatherData).last().date, 8)),
-            eorzeaTime.toEarth(_(this.__weatherData).first().date)) / 86400000).toFixed(2),
-          "days");
       }
     }
   }
@@ -153,4 +146,4 @@ class WeatherService {
   }
 }
 
-export default new WeatherService;
+module.exports = new WeatherService;

@@ -1,12 +1,12 @@
-import _ from 'underscore';
-import moment from 'moment';
-import twix from 'twix';
-import dateFns from 'date-fns';
-import Rx from 'rx';
+const _ = require('underscore');
+const moment = require('moment');
+const twix = require('twix');
+const dateFns = require('date-fns');
+const Rx = require('rx');
 
-import DATA from './data.js';
-import __p from './localization.js';
-import eorzeaTime from './time.js';
+const DATA = require('./data.js');
+const __p = require('./localization.js');
+const eorzeaTime = require('./time.js');
 
 function shouldLogForFish() {
   return false;
@@ -210,7 +210,7 @@ function muxinIntuitionReqs(fish, idx, fishes) {
   }
 }
 
-export default _(DATA.FISH).chain()
+module.exports = _(DATA.FISH).chain()
   .values()
   .map((fishData) => new Fish(fishData))
   .each(muxinIntuitionReqs)

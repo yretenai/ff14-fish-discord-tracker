@@ -1,12 +1,12 @@
-import _ from 'underscore';
-import moment from 'moment';
-import twix from 'twix';
-import Rx from 'rx';
-import dateFns from 'date-fns';
+const _ = require('underscore');
+const moment = require('moment');
+const twix = require('twix');
+const Rx = require('rx');
+const dateFns = require('date-fns');
 
-import __p from './localization.js';
-import Fishes from './fish.js';
-import eorzeaTime from './time.js';
+const __p = require('./localization.js');
+const Fishes = require('./fish.js');
+const eorzeaTime = require('./time.js');
 
 class CompletionManager {
   constructor() {
@@ -288,7 +288,6 @@ class ViewModel {
 
     // Pick sorter.
     var sorter = null;
-    console.log("Sorting fish by:", this.sortingType);
     if (this.sortingType == 'windowPeriods') {
       sorter = sorters.sortByWindowPeriods;
     } else if (this.sortingType == 'overallRarity') {
@@ -500,4 +499,4 @@ class ViewModel {
   }
 }
 
-export default new ViewModel;
+module.exports = new ViewModel;

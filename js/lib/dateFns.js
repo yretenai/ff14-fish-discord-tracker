@@ -1,4 +1,4 @@
-import dateFns from 'date-fns';
+const dateFns = require('date-fns');
 
 dateFns.utc = (() => {
   var parse = dateFns.parse;
@@ -146,4 +146,4 @@ dateFns.utc = (() => {
 
 })();
 
-export default dateFns;
+module.exports = dateFns;

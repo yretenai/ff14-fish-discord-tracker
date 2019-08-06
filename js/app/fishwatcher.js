@@ -1,13 +1,13 @@
-import _ from 'underscore';
-import moment from 'moment';
-import twix from 'twix';
-import Rx from 'rx';
-import dateFns from 'date-fns';
+const _ = require('underscore');
+const moment = require('moment');
+const twix = require('twix');
+const Rx = require('rx');
+const dateFns = require('date-fns');
 
-import __p from './localization.js';
-import Fishes from './fish.js';
-import eorzeaTime from './time.js';
-import weatherService from './weather.js';
+const __p = require('./localization.js');
+const Fishes = require('./fish.js');
+const eorzeaTime = require('./time.js');
+const weatherService = require('./weather.js');
 
 function startOfPeriod(d) {
   return dateFns.utc.startOfHour(
@@ -205,4 +205,4 @@ class FishWatcher {
   }
 }
 
-export default new FishWatcher;
+module.exports = new FishWatcher;

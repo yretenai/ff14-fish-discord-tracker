@@ -1,8 +1,8 @@
-import _ from 'underscore';
-import moment from 'moment';
-import twix from 'twix';
+const _ = require('underscore');
+const moment = require('moment');
+const twix = require('twix');
 
-import __p from './localization.js';
+const __p = require('./localization.js');
 
 const LANGUAGES = {
   English: "_en",
@@ -44,4 +44,4 @@ class LocalizationHelper {
 }
 
 let localizationHelper = new LocalizationHelper();
-export default _.bind(localizationHelper.getLocalizedProperty, localizationHelper);
+module.exports = _.bind(localizationHelper.getLocalizedProperty, localizationHelper);
