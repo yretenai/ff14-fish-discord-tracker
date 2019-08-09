@@ -33,9 +33,9 @@ const notifiedClosingFish = new Set();
 const NotifyFish = async (fish, color, title, shouldPing) => {
     const embed = new RichEmbed().setTitle(title + " " + fish.name)
                                  .setColor(color)
-                                 .addField("Hole", fish.location.name)
-                                 .addField("Zone", fish.location.zoneName)
-                                 .addField("Bait", fish.bait.path.map(x => x.name_en).join(' -> '))
+                                 .addField("Hole", (fish.location.name||"").length == 0 ? "unknown" : fish.location.name)
+                                 .addField("Zone", (fish.location.zoneName||"").length == 0 ? "unknown" : fish.location.zoneName)
+                                 .addField("Bait", (fish.bait||[]).length == 0 ? "unknown" : fish.bait.path.map(x => x.name_en).join(' -> '))
                                  .setDescription(`${fish.name} ${fish.availability.current.duration()}!`)
                                  .attachFile(FishImage(fish.icon)[0])
                                  .setImage(`attachment://${fish.id}.png`);
