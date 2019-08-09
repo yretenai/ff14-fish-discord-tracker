@@ -16,14 +16,14 @@ module.exports = class AddFishPingCommand extends Akairo.Command {
         if(message.channel.type == 'dm') {
             set = this.client.userSettings.get(message.author.id, 'dmme', []);
         } else {
-            set = Object.keys(this.client.guildSettings.get(message.guild.id, 'pings', {})[message.author.id] || {}).map(parseInt);
+            set = Object.keys(this.client.guildSettings.get(message.guild.id, 'pings', {})[message.author.id] || {});
         }
         if(set.length == 0) {
             return message.reply('No fish :(');
         }
         let tracked = [];
         for(var fish of this.client.fishViewModel.theFish) {
-            if(set.indexOf(fish.id) > -1) {
+            if(set.indexOf(fish.id) > -1 || set.indexOf(fish.id.toString()) > -1) {
                 tracked.push(fish.name);
             }
         }
