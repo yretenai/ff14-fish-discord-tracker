@@ -26,9 +26,7 @@ const DiscordFish = new DiscordFishing({
     prefix: '!'
 }, viewModel);
 
-const currentlyLiveFish = new Set();
-const notifiedFish = new Set();
-const notifiedClosingFish = new Set();
+const fishState = {};
 
 const NotifyFish = async (fish, color, title, shouldPing) => {
     var baitPath =  fish.bait.path.map(x => x.name_en).join(' -> ');
@@ -94,30 +92,26 @@ DiscordFish.login(args[2]).then(() => {
         for (let fish of fishes) {
             if(fish.alwaysAvailable) continue;
             if(fish.isClosedSoon()) {
-                if(notifiedClosingFish.has(fish.id)) return;
-                notifiedFish.delete(fish.id);
-                notifiedClosingFish.add(fish.id);
+                if(fishState[fish.id] == "CLOSING") return;
+                fishState[fish.id] = "CLOSING";
                 if(!first) {
                     await NotifyFish(fish, 0xFF4040, "Fish leaving soon!", false);
                 }
-            }
-            else if(fish.isOpen()) {
-                if(currentlyLiveFish.has(fish.id)) return;
-                notifiedClosingFish.delete(fish.id);
-                currentlyLiveFish.add(fish.id);
-                if(!first) {
-                    await NotifyFish(fish, 0x00FF7F, "Fish open!", true);
-                }
-            }
-            else if(fish.isOpenSoon()) {
-                if(notifiedFish.has(fish.id)) return;
-                currentlyLiveFish.delete(fish.id);
-                notifiedFish.add(fish.id);
+            } else if(fish.isOpenSoon()) {
+                if(fishState[fish.id] == "OPENING") return;
+                fishState[fish.id] = "OPENING";
                 if(!first) {
                     await NotifyFish(fish, 0xFFA07A, "Fish opening soon!", true);
                 }
+            } else if(fish.isOpen()) {
+                if(fishState[fish.id] == "OPEN") return;
+                fishState[fish.id] = "OPEN";
+                if(!first) {
+                    await NotifyFish(fish, 0x00FF7F, "Fish open!", true);
+                }
             } else if(currentlyLiveFish.has(fish.id)) {
-                currentlyLiveFish.delete(fish.id);
+                if(fishState[fish.id] == "CLOSED") return;
+                fishState[fish.id] = "CLOSED";
                 if(!first) {
                     await NotifyFish(fish, 0x800000, "Fish left!", false);
                 }
