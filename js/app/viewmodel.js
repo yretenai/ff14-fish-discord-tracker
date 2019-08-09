@@ -345,7 +345,7 @@ class ViewModel {
           if (crs.length > 0) {
             if (dateFns.isFuture(eorzeaTime.toEarth(+crs[0].start()))) {
               var minutesUntilUp = dateFns.differenceInMinutes(eorzeaTime.toEarth(+crs[0].start()), Date.now());
-              if (minutesUntilUp < 4) {
+              if (minutesUntilUp < 6) {
                 return true;
               }
             }
