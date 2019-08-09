@@ -32,9 +32,13 @@ module.exports = class FishCommand extends Akairo.Command {
                     for(var window of windows) {
                         messageBlob.push(`${new Date(window.start)} for ${window.duration}`);
                     }
-                    return message.reply(messageBlob.join('\n'), {
-                        files: FishImage(fish.icon)
-                    });
+                    const embed = new RichEmbed().setTitle(title + " " + fish.name)
+                                                 .setColor(color)
+                                                 .addField("Zone", fish.location)
+                                                 .setDescription(`${fish.name} ${fish.availability.current.duration()}!\n${fish.bait.path.map(x => x.name_en).join(' -> ')}`)
+                                                 .attachFile(FishImage(fish.icon)[0])
+                                                 .setImage(`attachment://${fish.id}.png`);
+                    return message.reply(messageBlob.join('\n'), embed);
                 }
             }
         }
