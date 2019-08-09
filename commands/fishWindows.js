@@ -34,11 +34,19 @@ module.exports = class FishCommand extends Akairo.Command {
                     }
                     var baitPath =  fish.bait.path.map(x => x.name_en).join(' -> ');
                     const embed = new RichEmbed().setTitle(fish.name)
-                                                 .addField("Hole", (fish.location.name||"").length == 0 ? "unknown" : fish.location.name)
-                                                 .addField("Zone", (fish.location.zoneName||"").length == 0 ? "unknown" : fish.location.zoneName)
-                                                 .addField("Bait", baitPath.length == 0 ? "unknown" : baitPath)
                                                  .attachFile(FishImage(fish.icon)[0])
                                                  .setImage(`attachment://${fish.id}.png`);
+                    if(fish.location != null) {
+                        if(fish.location.name != null && fish.location.name.length > 0) {
+                            embed.addField("Hole", fish.location.name);
+                        }
+                        if(fish.location.zoneName != null && fish.location.zoneName.length > 0) {
+                            embed.addField("Hole", fish.location.zoneName);
+                        }
+                    }
+                    if(baitPath.length > 0) {
+                        embed.addField("Bait", baitPath);
+                    }
                     return message.reply(messageBlob.join('\n'), embed);
                 }
             }

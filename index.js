@@ -34,12 +34,20 @@ const NotifyFish = async (fish, color, title, shouldPing) => {
     var baitPath =  fish.bait.path.map(x => x.name_en).join(' -> ');
     const embed = new RichEmbed().setTitle(title + " " + fish.name)
                                  .setColor(color)
-                                 .addField("Hole", (fish.location.name||"").length == 0 ? "unknown" : fish.location.name)
-                                 .addField("Zone", (fish.location.zoneName||"").length == 0 ? "unknown" : fish.location.zoneName)
-                                 .addField("Bait", baitPath.length == 0 ? "unknown" : baitPath)
                                  .setDescription(`${fish.name} ${fish.availability.current.duration()}!`)
                                  .attachFile(FishImage(fish.icon)[0])
                                  .setImage(`attachment://${fish.id}.png`);
+    if(fish.location != null) {
+        if(fish.location.name != null && fish.location.name.length > 0) {
+            embed.addField("Hole", fish.location.name);
+        }
+        if(fish.location.zoneName != null && fish.location.zoneName.length > 0) {
+            embed.addField("Hole", fish.location.zoneName);
+        }
+    }
+    if(baitPath.length > 0) {
+        embed.addField("Bait", baitPath);
+    }
     const uptime = fish.uptime();
     for(const guildModel of await DiscordFish.guildSettings.table.findAll({})) {
         const guildId = guildModel.dataValues.id;
