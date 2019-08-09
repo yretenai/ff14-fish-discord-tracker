@@ -27,7 +27,7 @@ class FishWatcher {
   }
 
   updateFishes() {
-    console.info("FishWatcher is considering updating fishies >< c> |o.o)>");
+    // console.info("FishWatcher is considering updating fishies >< c> |o.o)>");
 
     // CLEANUP PHASE:
     //   Remove expired windows first.
@@ -53,7 +53,7 @@ class FishWatcher {
 
     this.updatedFishesObserver.onNext(fishes);
 
-    console.info("FishWatcher is finished...");
+    // console.info("FishWatcher is finished...");
   }
 
   updateRangesForFish(fish) {
