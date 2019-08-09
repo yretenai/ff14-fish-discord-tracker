@@ -109,7 +109,7 @@ DiscordFish.login(args[2]).then(() => {
                 if(!first) {
                     await NotifyFish(fish, 0x00FF7F, "Fish open!", true);
                 }
-            } else if(currentlyLiveFish.has(fish.id)) {
+            } else if(fishState[fish.id] == "OPEN") {
                 if(fishState[fish.id] == "CLOSED") return;
                 fishState[fish.id] = "CLOSED";
                 if(!first) {
