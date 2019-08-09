@@ -25,13 +25,17 @@ module.exports = class AddFishDMCommand extends Akairo.Command {
 
     exec(message, { fishName }) {
         if(fishName) {
-            const set = new Set(this.client.userSettings.get(message.author, 'dmme', []));
-            if(set.has(fishName)) {
-                return message.reply('You\'re already being DMed for that fish.');
-            } else {
-                set.add(fishName);
-                this.client.userSettings.set(message.author, 'dmme', Array.from(set));
-                return message.reply(`Ok, DMing for ${fishName}.`);
+            const set = new Set(this.client.userSettings.get(message.author.id, 'dmme', []));
+            for(var fish of this.client.fishViewModel.theFish) {
+                if(fish.name.toLowerCase() == fishName.toLowerCase() || fish.name.toLowerCase().indexOf(fishName.toLowerCase()) > -1) {
+                    if(set.has(fish.id)) {
+                        return message.reply(`You\'re already being DMed for ${fish.name}.`);
+                    } else {
+                        set.add(fish.id);
+                        this.client.userSettings.set(message.author.id, 'dmme', Array.from(set));
+                        return message.reply(`Ok, DMing for ${fish.name}.`);
+                    }
+                }
             }
         }
     }

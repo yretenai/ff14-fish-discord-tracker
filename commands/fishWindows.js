@@ -25,7 +25,6 @@ module.exports = class FishCommand extends Akairo.Command {
 
     exec(message, { fishName }) {
         if(fishName) {
-            console.log(fishName);
             for(var fish of this.client.fishViewModel.theFish) {
                 if(fish.name.toLowerCase() == fishName.toLowerCase() || fish.name.toLowerCase().indexOf(fishName.toLowerCase()) > -1) {
                     let windows = fish.availability.upcomingWindows();

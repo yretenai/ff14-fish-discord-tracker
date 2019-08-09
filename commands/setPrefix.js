@@ -27,7 +27,7 @@ module.exports = class PrefixCommand extends Akairo.Command {
         if(!prefix) {
             prefix = this.client.config.prefix;
         }
-        this.client.guildSettings.set(message.guild, 'prefix', prefix);
+        this.client.guildSettings.set(message.guild.id, 'prefix', prefix);
         return message.reply(`This server's prefix has been set to ${prefix}.`);
     }
 }

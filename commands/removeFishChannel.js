@@ -13,10 +13,10 @@ module.exports = class RemoveChannelCommand extends Akairo.Command {
     }
 
     exec(message) {
-        const set = this.client.userSettings.get(message.guild, 'channels', {});
+        const set = this.client.guildSettings.get(message.guild.id, 'channels', {});
         if(set[message.channel.id]) {
             delete set[message.channel.id];
-            this.client.userSettings.set(message.guild, 'channels', Array.from(set));
+            this.client.guildSettings.set(message.guild.id, 'channels', set);
             return message.reply(`Ok, no longer messaging this channel.`);
         }
     }

@@ -24,17 +24,24 @@ module.exports = class RemoveFishPingCommand extends Akairo.Command {
     }
 
     exec(message, { fishName }) {
+        const set = this.client.guildSettings.get(message.guild.id, 'pings', {});
+        if(!(message.author.id in set)) return message.reply(`I'm not pinging you for any fish.`);
+
         if(fishName) {
-            const set = new Set(this.client.userSettings.get(message.author, 'pingme', []));
-            if(set.has(fishName)) {
-                set.delete(fishName);
-                this.client.userSettings.set(message.author, 'pingme', Array.from(set));
-                return message.reply(`Ok, no longer pinging for ${fishName}.`);
-            } else {
-                return message.reply('You\'re not being pinged for that fish.');
+            for(var fish of this.client.fishViewModel.theFish) {
+                if(fish.name.toLowerCase() == fishName.toLowerCase() || fish.name.toLowerCase().indexOf(fishName.toLowerCase()) > -1) {
+                    if(set[message.author.id][fish.id]) {
+                        set[message.author.id][fish.id] = false;
+                        delete set[message.author.id][fish.id];
+                        this.client.guildSettings.set(message.guild.id, 'pings', set);
+                        return message.reply(`Ok, no longer pinging for ${fish.name}.`);
+                    } else {
+                        return message.reply(`You\'re not being pinging for ${fish.name}.`);
+                    }
+                }
             }
         } else {
-            this.client.userSettings.set(message.author, 'pingme', []);
+            if(message.author.id in set) delete set[message.author.id];
             return message.reply(`Ok, no longer pinging for any fish.`);
         }
     }

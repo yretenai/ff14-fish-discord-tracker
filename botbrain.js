@@ -14,7 +14,7 @@ module.exports = class DiscordFishing extends Akairo.AkairoClient {
             ownerID: config.ownerID,
             prefix: msg => {
                 if(msg.guild) {
-                    return this.guildSettigns.get(msg.guild.id, 'prefix', this.config.prefix)
+                    return this.guildSettings.get(msg.guild.id, 'prefix', this.config.prefix)
                 }
                 return this.config.prefix;
             },
@@ -63,10 +63,10 @@ module.exports = class DiscordFishing extends Akairo.AkairoClient {
         this.GuildModel.sync();
         this.UserModel.sync();
         this.userSettings = new Akairo.SequelizeProvider(this.UserModel, { dataColumn: 'settings' });
-        this.guildSettigns = new Akairo.SequelizeProvider(this.GuildModel, { dataColumn: 'settings' });
+        this.guildSettings = new Akairo.SequelizeProvider(this.GuildModel, { dataColumn: 'settings' });
         console.log("db setup...");
         await this.userSettings.init();
-        await this.guildSettigns.init();
+        await this.guildSettings.init();
         console.log("model setup...");
         await super.login(token);
         console.log("logged in?");

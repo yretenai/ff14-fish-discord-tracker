@@ -8,7 +8,7 @@ module.exports = class AddFishChannelCommand extends Akairo.Command {
             channelRestriction: 'guild',
             args: [
                 {
-                    id: 'uptime',
+                    id: 'threshold',
                     prompt: {
                         optional: true
                     }
@@ -16,17 +16,20 @@ module.exports = class AddFishChannelCommand extends Akairo.Command {
             ],
             description: {
                 content: 'Starts messaging this channel about fish windows, with an optional uptime threshold',
-                usage: '[uptime]',
+                usage: '[threshold]',
                 examples: ['0.03']
             }
         });
     }
 
     exec(message, { threshold }) {
-        const set = this.client.userSettings.get(message.guild, 'channels', {});
+        const set = this.client.guildSettings.get(message.guild.id, 'channels', {});
+        if(Object.keys(set).length > 1) {
+            return message.reply("Can only message on channel.");
+        }
         if(!set[message.channel.id]) {
-            set[message.channel.id] = parseFloat(threshold) || 0.03
-            this.client.userSettings.set(message.guild, 'channels', set);
+            set[message.channel.id] = parseFloat(threshold) || 0.03;
+            this.client.guildSettings.set(message.guild.id, 'channels', set);
             return message.reply(`Ok, will start notifying this channel.`);
         }
     }

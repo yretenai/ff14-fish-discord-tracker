@@ -8,6 +8,7 @@ const weatherService = require('./js/app/weather.js');
 
 const DiscordFishing = require('./botbrain.js');
 const FishImage = require('./fishImage.js');
+const { RichEmbed } = require('discord.js'); 
 
 let args = process.argv;
 
@@ -29,91 +30,97 @@ const currentlyLiveFish = new Set();
 const notifiedFish = new Set();
 const notifiedClosingFish = new Set();
 
-const NotifyFishClosing = (fish) => {
-    // const msg = new webhook.MessageBuilder()
-    //             .setText("https://ff14fish.carbuncleplushy.com")
-    //             .setName("Intense Fish Aficionado")
-    //             .setTitle("Fish leaving!")
-    //             .setColor("#FF4040") // ooh coral red!
-    //             .setDescription(`${fish.name} ${fish.availability.current.duration()}!\n${fish.bait.path.map(x => x.name_en).join(' -> ')}`)
-    //             .setImage(getXivApiIcon(fish))
-    //             .setTime();
-    //             hook.send(msg);
-}
-
-const NotifyFishOpen = (fish) => {
-    // const msg = new webhook.MessageBuilder()
-    //             .setText("https://ff14fish.carbuncleplushy.com")
-    //             .setName("Intense Fish Aficionado")
-    //             .setTitle("Fish sighted!")
-    //             .setColor("#00FF7F") // ooh spring green!
-    //             .setDescription(`${fish.name} ${fish.availability.current.duration()}!\n${fish.bait.path.map(x => x.name_en).join(' -> ')}`)
-    //             .setImage(getXivApiIcon(fish))
-    //             .setTime();
-    //             hook.send(msg);
-}
-
-const NotifyFishSoon = (fish) => {
-    // const msg = new webhook.MessageBuilder()
-    //             .setText("https://ff14fish.carbuncleplushy.com")
-    //             .setName("Intense Fish Aficionado")
-    //             .setTitle("Fish is approaching!")
-    //             .setColor("#FFA07A") // ooh light salmon!
-    //             .setDescription(`${fish.name} opening ${fish.availability.current.duration()}!\n${fish.bait.path.map(x => x.name_en).join(' -> ')}`)
-    //             .setImage(getXivApiIcon(fish))
-    //             .setTime();
-    //             hook.send(msg);
-}
-
-const NotifyFishClosed = (fish) => {
-    // const msg = new webhook.MessageBuilder()
-    //             .setText("https://ff14fish.carbuncleplushy.com")
-    //             .setName("Intense Fish Aficionado")
-    //             .setTitle("Fish is approaching!")
-    //             .setColor("#FFA07A") // ooh light salmon!
-    //             .setDescription(`${fish.name} opening ${fish.availability.current.duration()}!\n${fish.bait.path.map(x => x.name_en).join(' -> ')}`)
-    //             .setImage(getXivApiIcon(fish))
-    //             .setTime();
-    //             hook.send(msg);
-}
-DiscordFish.login(args[2]).then(() => {
-    let first = true;
-    const check = () => {
-        const fishes = viewModel.updateAll();
-        if(first) {
-            first = false;
-            return;
+const NotifyFish = async (fish, color, title, shouldPing) => {
+    const embed = new RichEmbed().setTitle(title + " " + fish.name)
+                                 .setColor(color)
+                                 .setDescription(`${fish.name} ${fish.availability.current.duration()}!\n${fish.bait.path.map(x => x.name_en).join(' -> ')}`)
+                                 .attachFile(FishImage(fish.icon)[0])
+                                 .setImage(`attachment://${fish.id}.png`);
+    const uptime = fish.uptime();
+    for(const guildModel of await DiscordFish.guildSettings.table.findAll({})) {
+        const guildId = guildModel.dataValues.id;
+        const guildSettings = DiscordFish.guildSettings.get(guildId, "channels", {});
+        const pings = DiscordFish.guildSettings.get(guildId, 'pings', {});
+        let pingMap = [];
+        for(var userId in pings) {
+            if(pings[userId] && pings[userId][fish.id]) pingMap.push(await DiscordFish.fetchUser(userId, true));
         }
+        for(const channelId in guildSettings) {
+            if(guildSettings[channelId] >= uptime) {
+                const channel = DiscordFish.channels.get(channelId);
+                if(channel && channel.type == 'text') {
+                    if(pingMap.length > 0 && shouldPing) {
+                        await channel.send(pingMap.join(', '), embed);
+                    } else {
+                        await channel.send(embed);
+                    }
+                }
+                break;
+            }
+        }
+    }
+    for(const userModel of await DiscordFish.userSettings.table.findAll({})) {
+        const userId = userModel.dataValues.id;
+        const userSettings = DiscordFish.userSettings.get(userId, "dmme", []);
+        if(userSettings.indexOf(fish.id) > -1) {
+            try {
+                const user = await DiscordFish.fetchUser(userId, true);
+                if(!user.dmChannel) await user.createDM();
+                await user.dmChannel.send(embed);
+            }
+            catch (e) {
+                continue;
+            }
+        }
+    }
+}
+
+DiscordFish.login(args[2]).then(() => {
+    let first = false;
+    const check = async () => {
+        const fishes = viewModel.updateAll();
         for (let fish of fishes) {
             if(fish.alwaysAvailable) continue;
             if(fish.isClosedSoon()) {
                 if(notifiedClosingFish.has(fish.id)) return;
-                NotifyFishClosing(fish);
-                
                 notifiedFish.delete(fish.id);
-
                 notifiedClosingFish.add(fish.id);
+                if(!first) {
+                    await NotifyFish(fish, 0xFF4040, "Fish leaving soon!", false);
+                }
             }
             else if(fish.isOpen()) {
                 if(currentlyLiveFish.has(fish.id)) return;
-                NotifyFishOpen(fish);
-
                 notifiedClosingFish.delete(fish.id);
-
                 currentlyLiveFish.add(fish.id);
+                if(!first) {
+                    await NotifyFish(fish, 0x00FF7F, "Fish open!", true);
+                }
             }
             else if(fish.isOpenSoon()) {
                 if(notifiedFish.has(fish.id)) return;
-                NotifyFishSoon(fish);
-
                 currentlyLiveFish.delete(fish.id);
-
                 notifiedFish.add(fish.id);
+                if(!first) {
+                    await NotifyFish(fish, 0xFFA07A, "Fish opening soon!", true);
+                }
             } else if(currentlyLiveFish.has(fish.id)) {
-                NotifyFishClosed(fish);
                 currentlyLiveFish.delete(fish.id);
+                if(!first) {
+                    await NotifyFish(fish, 0x800000, "Fish left!", false);
+                }
             }
         }
+        if(first) {
+            first = false;
+            return;
+        }
     }
-    fishWatcher.updatedFishesObserver.subscribe(check);
+    fishWatcher.updatedFishesObserver.subscribe(() => {
+        check().then(() => {
+            // ignore
+        }).catch((reason) => {
+            console.error(reason);
+        })
+    });
 });

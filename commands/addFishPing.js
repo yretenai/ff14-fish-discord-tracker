@@ -3,6 +3,7 @@ const Akairo = require('discord-akairo');
 module.exports = class AddFishPingCommand extends Akairo.Command {
     constructor() {
         super('ping-me', {
+            aliases: ['ping-me'],
             category: 'settings',
             channelRestriction: 'guild',
             args: [
@@ -24,13 +25,18 @@ module.exports = class AddFishPingCommand extends Akairo.Command {
 
     exec(message, { fishName }) {
         if(fishName) {
-            const set = new Set(this.client.userSettings.get(message.author, 'pingme', []));
-            if(set.has(fishName)) {
-                return message.reply('You\'re already being pinged for that fish.');
-            } else {
-                set.add(fishName);
-                this.client.userSettings.set(message.author, 'pingme', Array.from(set));
-                return message.reply(`Ok, pinging for ${fishName}.`);
+            const set = this.client.guildSettings.get(message.guild.id, 'pings', {});
+            for(var fish of this.client.fishViewModel.theFish) {
+                if(fish.name.toLowerCase() == fishName.toLowerCase() || fish.name.toLowerCase().indexOf(fishName.toLowerCase()) > -1) {
+                    if(!(message.author.id in set)) set[message.author.id] = {};
+                    if(set[message.author.id][fish.id]) {
+                        return message.reply(`You\'re already being pinged for ${fish.name}.`);
+                    } else {
+                        set[message.author.id][fish.id] = true;
+                        this.client.guildSettings.set(message.guild.id, 'pings', set);
+                        return message.reply(`Ok, pinging for ${fish.name}.`);
+                    }
+                }
             }
         }
     }
