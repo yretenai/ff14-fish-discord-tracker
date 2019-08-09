@@ -329,28 +329,18 @@ class ViewModel {
         pinned: this.completionManager.isFishPinned(x.id),
         timerState: () => { return x.isCatchable() ? 'fish-active' : '' },
         isClosedSoon: () => {
+          if(!x.isOpen()) return false;
           var crs = x.catchableRanges;
-          if (crs.length > 0) {
-            if (dateFns.isPast(eorzeaTime.toEarth(+crs[0].start()))) {
-              var minutesUntilClose = dateFns.differenceInMinutes(eorzeaTime.toEarth(Date.now(), +crs[0].end()));
-              if (minutesUntilClose < 3) {
-                return true;
-              }
-            }
-          }
-          return false;
+          if(crs.length == 0) return false;
+          var distance = dateFns.differenceInMinutes(eorzeaTime.toEarth(+crs[0].end()), Date.now());
+          return distance < 5;
         },
         isOpenSoon: () => {
+          if(x.isOpen()) return false;
           var crs = x.catchableRanges;
-          if (crs.length > 0) {
-            if (dateFns.isFuture(eorzeaTime.toEarth(+crs[0].start()))) {
-              var minutesUntilUp = dateFns.differenceInMinutes(eorzeaTime.toEarth(+crs[0].start()), Date.now());
-              if (minutesUntilUp < 6) {
-                return true;
-              }
-            }
-          }
-          return false;
+          if(crs.length == 0) return false;
+          var distance = dateFns.differenceInMinutes(eorzeaTime.toEarth(+crs[0].start()), Date.now());
+          return distance < 5;
         },
         isOpen: () => {
           var crs = x.catchableRanges;

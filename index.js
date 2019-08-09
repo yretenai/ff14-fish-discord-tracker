@@ -92,26 +92,30 @@ DiscordFish.login(args[2]).then(() => {
         for (let fish of fishes) {
             if(fish.alwaysAvailable) continue;
             if(fish.isClosedSoon()) {
-                if(fishState[fish.id] == "CLOSING") return;
+                if(fishState[fish.id] == "CLOSING") continue;
                 fishState[fish.id] = "CLOSING";
+                console.log(fish.name, "is closing soon");
                 if(!first) {
                     await NotifyFish(fish, 0xFF4040, "Fish leaving soon!", false);
                 }
             } else if(fish.isOpenSoon()) {
-                if(fishState[fish.id] == "OPENING") return;
+                if(fishState[fish.id] == "OPENING") continue;
                 fishState[fish.id] = "OPENING";
+                console.log(fish.name, "is opening soon");
                 if(!first) {
                     await NotifyFish(fish, 0xFFA07A, "Fish opening soon!", true);
                 }
             } else if(fish.isOpen()) {
-                if(fishState[fish.id] == "OPEN") return;
+                if(fishState[fish.id] == "OPEN") continue;
                 fishState[fish.id] = "OPEN";
+                console.log(fish.name, "is open");
                 if(!first) {
                     await NotifyFish(fish, 0x00FF7F, "Fish open!", true);
                 }
             } else if(fishState[fish.id] == "OPEN") {
-                if(fishState[fish.id] == "CLOSED") return;
+                if(fishState[fish.id] == "CLOSED") continue;
                 fishState[fish.id] = "CLOSED";
+                console.log(fish.name, "is closed");
                 if(!first) {
                     await NotifyFish(fish, 0x800000, "Fish left!", false);
                 }
