@@ -14,7 +14,7 @@ module.exports = class AddFishPingCommand extends Akairo.Command {
     exec(message) {
         let set = [];
         if(message.channel.type == 'dm') {
-            set = this.client.userSettings.get(message.user.id, 'dmme', []);
+            set = this.client.userSettings.get(message.author.id, 'dmme', []);
         } else {
             set = Object.keys(this.client.guildSettings.get(message.guild.id, 'pings', {})[message.author.id] || {}).map(parseInt);
         }
