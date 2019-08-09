@@ -1,5 +1,6 @@
 const Akairo = require('discord-akairo');
 const FishImage = require('../fishImage.js');
+const { RichEmbed } = require('discord.js'); 
 
 module.exports = class FishCommand extends Akairo.Command {
     constructor() {
