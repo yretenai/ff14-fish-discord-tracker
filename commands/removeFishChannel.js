@@ -6,6 +6,7 @@ module.exports = class RemoveChannelCommand extends Akairo.Command {
             aliases: ['remove-channel'],
             category: 'settings',
             channelRestriction: 'guild',
+            userPermissions: 'MANAGE_CHANNELS',
             description: {
                 content: 'Stops messaging this channel about fish windows',
             }

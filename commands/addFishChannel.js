@@ -6,6 +6,7 @@ module.exports = class AddFishChannelCommand extends Akairo.Command {
             aliases: ['add-channel'],
             category: 'settings',
             channelRestriction: 'guild',
+            userPermissions: 'MANAGE_CHANNELS',
             args: [
                 {
                     id: 'threshold',
