@@ -32,8 +32,7 @@ module.exports = class FishCommand extends Akairo.Command {
                     for(var window of windows) {
                         messageBlob.push(`${new Date(window.start)} for ${window.duration}`);
                     }
-                    const embed = new RichEmbed().setTitle(title + " " + fish.name)
-                                                 .setColor(color)
+                    const embed = new RichEmbed().setTitle(fish.name)
                                                  .addField("Hole", (fish.location.name||"").length == 0 ? "unknown" : fish.location.name)
                                                  .addField("Zone", (fish.location.zoneName||"").length == 0 ? "unknown" : fish.location.zoneName)
                                                  .addField("Bait", (fish.bait||[]).length == 0 ? "unknown" : fish.bait.path.map(x => x.name_en).join(' -> '))
