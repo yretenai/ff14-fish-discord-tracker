@@ -40,7 +40,7 @@ const NotifyFish = async (fish, color, title, shouldPing) => {
             embed.addField("Hole", fish.location.name);
         }
         if(fish.location.zoneName != null && fish.location.zoneName.length > 0) {
-            embed.addField("Hole", fish.location.zoneName);
+            embed.addField("Zone", fish.location.zoneName);
         }
     }
     if(baitPath.length > 0) {
