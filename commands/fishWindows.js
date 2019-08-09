@@ -32,10 +32,11 @@ module.exports = class FishCommand extends Akairo.Command {
                     for(var window of windows) {
                         messageBlob.push(`${new Date(window.start)} for ${window.duration}`);
                     }
+                    var baitPath =  fish.bait.path.map(x => x.name_en).join(' -> ');
                     const embed = new RichEmbed().setTitle(fish.name)
                                                  .addField("Hole", (fish.location.name||"").length == 0 ? "unknown" : fish.location.name)
                                                  .addField("Zone", (fish.location.zoneName||"").length == 0 ? "unknown" : fish.location.zoneName)
-                                                 .addField("Bait", (fish.bait||[]).length == 0 ? "unknown" : fish.bait.path.map(x => x.name_en).join(' -> '))
+                                                 .addField("Bait", baitPath.length == 0 ? "unknown" : baitPath)
                                                  .attachFile(FishImage(fish.icon)[0])
                                                  .setImage(`attachment://${fish.id}.png`);
                     return message.reply(messageBlob.join('\n'), embed);
